@@ -1,0 +1,24 @@
+<Alloy>
+  <Window id="index">
+	<View id="main" class="container">
+	  <View id="nav">
+	    <Label id="locationTitle">Qiita投稿一覧</Label>
+	  </View>
+	  <View id="pullView">
+		<View id="arrow"/>
+	    <Label>pull to refresh</Label>
+		<ActivityIndicator id="activityIndicator" message="Loading..."/>
+	  </View>
+      <ScrollableView id="scrollableView">
+		  <ListView id="listView" defaultItemTemplate="template">
+			  <Templates>
+				<ItemTemplate name="template" class="row">
+				  <Label bindId="title" class="title" />
+				  <View bindId="split" class="split_line" height="1" width="100%" bottom="0" backgroundColor="lightgray" />
+				</ItemTemplate>
+			  </Templates>
+		  </ListView>
+	  </ScrollableView>
+    </View>
+  </Window>
+</Alloy>

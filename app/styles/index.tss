@@ -1,0 +1,49 @@
+"Window" :{
+  orientationModes: [Ti.UI.PORTRAIT],
+  exitOnClose: true,
+},
+".container": {
+  backgroundColor:"white",
+  theme: "Theme.NoActionBar",
+  navBarHidden: true,
+  tabBarHidden: true,
+},
+"#nav":{
+  height:"50dp",
+	top:"0dp",
+  backgroundColor:'#59bb0c',
+	color:"white"
+}
+"#locationTitle":{
+  top:"10dp",
+  color:"#fff",
+  font: {fontSize:20, fontWeight:'bold'},  
+}
+"#scrollableView":{
+  width: "100%",
+  top:"50dp",
+}
+"#pullView": {
+  top:"50dp",
+  backgroundColor: "#FFF",
+  width: Ti.UI.FILL,
+  height: 60
+},
+"#arrow": {
+    backgroundImage:'/arrow.png',
+    top: 10,
+    height: 35,
+    left: 35,
+    width: 11,
+},
+".title":{
+  left:"10dp",
+  textAlign: Ti.UI.TEXT_ALIGNMENT_RIGHT
+}
+"#listView":{
+  borderColor:"lightgray",
+  backgroundColor: "#FFF",
+}
+"Label":{
+  color:"black",    
+}
