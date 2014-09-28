@@ -4,20 +4,27 @@
 	  <View id="nav">
 	    <Label id="locationTitle">Qiita投稿一覧</Label>
 	  </View>
-	  <View id="pullView">
-		<View id="arrow"/>
-	    <Label>pull to refresh</Label>
-		<ActivityIndicator id="activityIndicator" message="Loading..."/>
+	  <View id="pullView" platform='android' backgroundColor="#d5e8d4" borderColor="#3c763d" borderWidth="1">
+	    <Label id="pullTitle" color="#3c763d">pull to refresh</Label>
+		<ActivityIndicator id="activityIndicator" color="#3c763d" message="Loading..." style="Ti.UI.ActivityIndicatorStyle.DARK" />
 	  </View>
       <ScrollableView id="scrollableView">
+      	<View id="listview_parent" height=Ti.UI.SIZE width=Ti.UI.SIZE>
 		  <ListView id="listView" defaultItemTemplate="template">
+			  <PullView platform='ios'>
+		        <View backgroundColor="#d5e8d4" height="50" borderColor="#3c763d" borderWidth="1">
+				    <Label id="pullTitle" color="#3c763d">pull to refresh</Label>
+					<ActivityIndicator id="activityIndicator" color="#3c763d" message="Loading..." style=Ti.UI.iPhone.ActivityIndicatorStyle.DARK />
+		        </View>
+		      </PullView>
 			  <Templates>
 				<ItemTemplate name="template" class="row">
 				  <Label bindId="title" class="title" />
-				  <View bindId="split" class="split_line" height="1" width="100%" bottom="0" backgroundColor="lightgray" />
+				  <View platform='android' bindId="split" class="split_line" height="1" width="100%" bottom="0" backgroundColor="lightgray" />
 				</ItemTemplate>
 			  </Templates>
 		  </ListView>
+      	</View>	
 	  </ScrollableView>
     </View>
   </Window>

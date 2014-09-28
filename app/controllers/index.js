@@ -2,10 +2,11 @@
 var ApiMapper = require("apiMapper").ApiMapper;
 
 //初期設定
-var selectedView,areaData,infoTypes,division_id,buttonEnable;
-var scrollableView_top=50;
-
+var scrollableView_top = 50;
 var y = 0;
+
+//PullView処理　Android
+//スクロールが終了した際の高さが閾値以上だった場合に更新処理をする
 $.scrollableView.addEventListener('touchend', function(e)
 {
   y = 0;
@@ -14,31 +15,13 @@ $.scrollableView.addEventListener('touchend', function(e)
   var top = $.scrollableView.getTop();
 
   if(top > 100 && Titanium.Network.online){
-    $.scrollableView.animate({top:130, duration: 300});
-    Alloy.Globals.loading.show('loading...', false);
-
-    var apiMapper = new ApiMapper();
-    //初期データ取得  
-    apiMapper.allnews(
-    function(){
-      // 成功したとき
-      var json = JSON.parse(this.responseText);
-      updateTable(json);
-      $.scrollableView.animate({top: scrollableView_top+"dp", duration: 100});
-      Alloy.Globals.loading.hide();
-    },
-    function(){
-       // 失敗したとき
-        alert('データの取得に失敗しました。');
-        $.scrollableView.animate({top: scrollableView_top+"dp", duration: 100});
-        Alloy.Globals.loading.hide();
-      }
-    );    
+    infoUpdate("update");
   }else{
-      $.scrollableView.animate({top: scrollableView_top+"dp", duration: 100});
+    $.scrollableView.animate({top: scrollableView_top+"dp", duration: 100});
   }
 });
 
+//スクロールした分scrollableViewの位置をずらす
 $.scrollableView.addEventListener('touchmove', function(e)
 {
   if(y != 0 && Number(e.y) > scrollableView_top &&  Number(y) <= Number(e.y)){
@@ -51,30 +34,34 @@ $.scrollableView.addEventListener('touchmove', function(e)
   }
 });
 
+//PullView処理　iOS
+$.listView.addEventListener('pullend',function(e){
+  Ti.API.info("pullend")
+  infoUpdate("update");
+});
+
+
+//初期処理
 $.index.open();
 init();
 
-function updateTable(json){
-  var tableData = [];
-  tableData = json.map(function(d,i){ 
-    return {
-      title:{text:d.title},
-   };
-  });
-       
-  var section = Ti.UI.createListSection();
-  section.setItems(tableData);
-  $.listView.deleteSectionAt(0);
-  $.listView.setSections([section]);
-}
-
 function init(){
   Ti.API.info("初期処理");
-  infoUpdate();
+  infoUpdate("init");
 };
 
-function infoUpdate(){
-  Alloy.Globals.loading.show('loading...', false);
+function infoUpdate(status){
+  if(status == "init"){
+    Alloy.Globals.loading.show('loading...', false);
+  }else{
+    $.pullTitle.hide();
+    $.activityIndicator.show();         
+    if(OS_IOS){
+      $.listView.setContentInsets({top:50}, {animated:true});
+    }else{
+      $.scrollableView.animate({top: "100dp", duration: 100});
+    }
+  }
 
   if(!Titanium.Network.online){
     Ti.API.info("ネットワークなし");
@@ -94,11 +81,38 @@ function infoUpdate(){
       var json = JSON.parse(this.responseText);
       Ti.API.info(json.length);
       updateTable(json);
-      Alloy.Globals.loading.hide();
+      if(status == "init"){
+        Alloy.Globals.loading.hide();
+      }else{
+        $.pullTitle.show();
+        $.activityIndicator.hide();         
+        if(OS_IOS){
+          $.listView.setContentInsets({top:0}, {animated:true});
+        }else if(OS_ANDROID){
+          $.scrollableView.animate({top: scrollableView_top+"dp", duration: 100});
+        }
+      }
     },
     function(){
       // 失敗したとき
-        alert('データの取得に失敗しました。');
+      alert('データの取得に失敗しました。');
+      if(OS_ANDROID){
+        $.scrollableView.animate({top: scrollableView_top+"dp", duration: 100});
+      }
     });
   }
+}
+
+function updateTable(json){
+  var tableData = [];
+  tableData = json.map(function(d,i){ 
+    return {
+      title:{text:d.title},
+   };
+  });
+       
+  var section = Ti.UI.createListSection();
+  section.setItems(tableData);
+  $.listView.deleteSectionAt(0);
+  $.listView.setSections([section]);
 }
